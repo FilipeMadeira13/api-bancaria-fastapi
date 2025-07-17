@@ -33,6 +33,6 @@ class Transaction(SQLModel, table=True):
     account_id: int = Field(foreign_key="account.id")
     type: TransactionType
     value: float
-    timestamp: datetime = Field(default_factory=datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     account: Optional[Account] = Relationship(back_populates="transactions")
