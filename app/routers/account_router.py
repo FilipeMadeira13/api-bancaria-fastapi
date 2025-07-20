@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.security import get_current_user
 from app.domain.models import Account, User
@@ -8,14 +9,19 @@ from app.infra.database import get_session
 router = APIRouter(prefix="/account", tags=["account"])
 
 
-@router.post("/")
-def create_account(
-    session: Session = Depends(get_session),
+@router.post(
+    "/",
+    summary="Criar conta bancária",
+    description="Cria uma conta corrente para o usuário autenticado. Um usuário pode ter apenas uma conta vinculada.",
+)
+async def create_account(
+    session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    existing = session.exec(
+    result = await session.exec(
         select(Account).where(Account.user_id == current_user.id)
-    ).first()
+    )
+    existing = result.first()
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -24,6 +30,6 @@ def create_account(
 
     account = Account(user_id=current_user.id)
     session.add(account)
-    session.commit()
-    session.refresh(account)
+    await session.commit()
+    await session.refresh(account)
     return account

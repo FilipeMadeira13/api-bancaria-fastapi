@@ -18,7 +18,7 @@ from app.routers import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
+    await create_db_and_tables()
     yield
 
 
@@ -28,9 +28,6 @@ app.include_router(auth_router.router)
 app.include_router(account_router.router)
 app.include_router(transaction_router.router)
 app.include_router(statement_router.router)
-
-sqlite_url = "sqlite:///bank.db"
-engine = create_engine(sqlite_url, echo=True)
 
 
 def custom_openapi():

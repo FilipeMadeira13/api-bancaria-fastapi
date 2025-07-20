@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.domain.models import TransactionType
 
@@ -28,8 +28,7 @@ class TransactionRead(BaseModel):
     value: float
     timestamp: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRead(BaseModel):
@@ -37,5 +36,4 @@ class UserRead(BaseModel):
     username: str
     email: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
