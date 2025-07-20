@@ -43,7 +43,7 @@ api-bancaria-fastapi/
 │ └── main.py # Inicialização da API
 ├── tests/ # Testes automatizados
 ├── alembic/ # Controle de migrações
-├── requirements.txt
+├── pyproject.toml
 └── README.md
 ```
 
