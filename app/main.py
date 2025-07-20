@@ -9,10 +9,10 @@ from sqlmodel import SQLModel, create_engine
 from app.domain.models import Account, Transaction, User
 from app.infra.database import create_db_and_tables
 from app.routers import (
-    account_router,
-    auth_router,
-    statement_router,
-    transaction_router,
+    account,
+    auth,
+    statement,
+    transaction,
 )
 
 
@@ -24,10 +24,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(auth_router.router)
-app.include_router(account_router.router)
-app.include_router(transaction_router.router)
-app.include_router(statement_router.router)
+app.include_router(auth.router)
+app.include_router(account.router)
+app.include_router(transaction.router)
+app.include_router(statement.router)
 
 
 def custom_openapi():
