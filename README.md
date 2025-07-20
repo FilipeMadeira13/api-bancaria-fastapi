@@ -54,7 +54,7 @@ api-bancaria-fastapi/
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/api-bancaria-fastapi.git
+git clone https://github.com/FilipeMadeira13/api-bancaria-fastapi.git
 cd api-bancaria-fastapi
 ```
 
