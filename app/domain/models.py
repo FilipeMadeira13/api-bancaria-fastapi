@@ -30,7 +30,7 @@ class Account(SQLModel, table=True):
 
 class Transaction(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    account_id: int = Field(foreign_key="account.id")
+    account_id: int = Field(foreign_key="account.id", nullable=False)
     type: TransactionType
     value: float
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
