@@ -1,6 +1,6 @@
 # 💸 API Bancária Assíncrona com FastAPI
 
-[![Python](https://img.shields.io/badge/Python-3.13+-3776ab?logo=python&logoColor=white)](https://www.python.org)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776ab?logo=python&logoColor=white)](https://www.python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -50,7 +50,7 @@ Projeto de uma **API RESTful assíncrona** para gerenciamento de contas bancári
 
 | Categoria | Tecnologia |
 |-----------|-----------|
-| **Linguagem** | Python 3.13+ |
+| **Linguagem** | Python 3.11+ |
 | **Framework Web** | FastAPI 0.104+ |
 | **ORM/Modelos** | SQLModel + SQLAlchemy |
 | **Banco de Dados** | SQLite + aiosqlite |
@@ -65,7 +65,7 @@ Projeto de uma **API RESTful assíncrona** para gerenciamento de contas bancári
 
 ## ⚡ Requisitos
 
-- Python 3.13+
+- Python 3.11+
 - Poetry (recomendado) ou pip
 - Docker & Docker Compose (para containerização)
 - Git
@@ -137,11 +137,38 @@ SQL_ECHO=false  # Ativa logs SQL (útil para debug)
 
 ## 🏃 Como usar
 
-### 1. Rodar o servidor de desenvolvimento
+### 1. Ativar o ambiente virtual
 
 ```bash
-# Com auto-reload
+# Com .venv
+source .venv/bin/activate  # Linux/Mac
+# ou
+.venv\Scripts\activate  # Windows
+
+# Com Poetry
+poetry shell
+```
+
+### 2. Rodar o servidor de desenvolvimento
+
+**Forma mais fácil (recomendado):**
+
+```bash
+# Linux/Mac
+./run.sh
+
+# Windows
+run.bat
+```
+
+**Formas alternativas:**
+
+```bash
+# Direto com uvicorn
 uvicorn app.main:app --reload
+
+# Ou com Python module
+python -m uvicorn app.main:app --reload
 
 # Ou com Poetry
 poetry run uvicorn app.main:app --reload
@@ -149,7 +176,7 @@ poetry run uvicorn app.main:app --reload
 
 Servidor rodando em: **http://localhost:8000**
 
-### 2. Acessar a documentação
+### 3. Acessar a documentação
 
 - 📘 **Swagger UI**: http://localhost:8000/docs
 - 📙 **ReDoc**: http://localhost:8000/redoc
@@ -491,6 +518,30 @@ api-bancaria-fastapi/
 
 ## 🔧 Troubleshooting
 
+### Erro: "Current Python version X is not allowed by the project (>=3.13)"
+
+```bash
+# Seu projeto agora funciona com Python 3.11+
+# Se você está usando Poetry com Python 3.12, use:
+poetry env use $(which python3)
+
+# Ou instale as dependências diretamente:
+pip install -r requirements.txt
+```
+
+### Erro: "Command 'uvicorn' not found"
+
+```bash
+# Ative o ambiente virtual primeiro
+source .venv/bin/activate
+
+# Depois reinstale as dependências
+pip install uvicorn fastapi
+
+# Ou use poetry
+poetry install
+```
+
 ### Erro: "No module named 'app'"
 
 ```bash
@@ -498,7 +549,7 @@ api-bancaria-fastapi/
 cd api-bancaria-fastapi
 
 # E use o uvicorn corretamente
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 ### Erro: "Password cannot be longer than 72 bytes"
@@ -519,10 +570,14 @@ python -c "from app.infra.database import create_db_and_tables; import asyncio; 
 ```bash
 # Limpe o ambiente
 rm -rf .venv
-poetry install
+python -m venv .venv
+source .venv/bin/activate
+
+# Instale dependências
+pip install -r requirements.txt
 
 # Rode os testes novamente
-poetry run pytest -v
+pytest -v
 ```
 
 ---
