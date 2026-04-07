@@ -6,7 +6,6 @@ def test_register_user(client):
         "/auth/register",
         json={"name": "Filipe", "email": "filipe@teste.com", "password": "123456"},
     )
-    print("JSON de resposta:", response.json())
     assert response.status_code == status.HTTP_200_OK
 
     data = response.json()

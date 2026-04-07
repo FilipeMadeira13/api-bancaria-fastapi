@@ -173,4 +173,24 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
+# Local SQLite database
+bank.db
+
 # End of https://www.toptal.com/developers/gitignore/api/python
+# Environment files (extras)
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build and distribution
+dist/
+build/
+*.egg-info/
+wheels/

@@ -32,6 +32,49 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title="API Bancária Assíncrona",
+        description="""
+        API RESTful desenvolvida com FastAPI para gerenciamento de operações bancárias.
+
+        Funcionalidades:
+        - Registro e autenticação de usuários com JWT
+        - Criação de contas bancárias
+        - Depósitos e saques com validações
+        - Consulta de extrato com filtros
+        - Projeto estruturado com Clean Architecture
+
+        Todos os endpoints protegidos utilizam autenticação via JWT.
+        """,
+        version="1.0.0",
+        routes=app.routes,
+    )
+
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    }
+
+    for path, path_item in openapi_schema["paths"].items():
+        if path.startswith("/auth"):
+            continue
+        for method in path_item.values():
+            method["security"] = [{"BearerAuth": []}]
+
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

@@ -21,6 +21,14 @@ class TokenData(BaseModel):
     email: str
 
 
+class AccountRead(BaseModel):
+    id: int
+    user_id: int
+    balance: float
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class TransactionRead(BaseModel):
     id: int
     account_id: int
@@ -31,9 +39,15 @@ class TransactionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class TransactionResponse(BaseModel):
+    message: str
+    new_balance: float
+    transaction_id: int
+
+
 class UserRead(BaseModel):
     id: int
-    username: str
+    name: str
     email: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

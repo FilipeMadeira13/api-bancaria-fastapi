@@ -5,8 +5,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-sqlite_url = "sqlite+aiosqlite:///./bank.db"
-engine = create_async_engine(sqlite_url, echo=True)
+from app.core.config import DATABASE_URL, SQL_ECHO
+
+engine = create_async_engine(DATABASE_URL, echo=SQL_ECHO)
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 

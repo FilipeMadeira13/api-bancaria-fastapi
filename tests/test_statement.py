@@ -13,7 +13,10 @@ def setup_user_account(client):
 
 
 def create_transaction(client, headers, type_, value):
-    payload = {"type": type_, "value": value}
+    payload = {
+        "type": type_.value if hasattr(type_, "value") else type_,
+        "value": value,
+    }
     return client.post("/transaction/", json=payload, headers=headers)
 
 

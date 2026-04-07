@@ -5,7 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.security import get_current_user
 from app.domain.models import Account, Transaction, TransactionType, User
-from app.domain.schemas import TransactionRead
+from app.domain.schemas import TransactionResponse
 from app.infra.database import get_session
 
 router = APIRouter(prefix="/transaction", tags=["transaction"])
@@ -18,6 +18,8 @@ class TransactionInput(BaseModel):
 
 @router.post(
     "/",
+    response_model=TransactionResponse,
+    status_code=status.HTTP_201_CREATED,
     summary="Registrar transação",
     description="Registra uma transação de depósito ou saque para o usuário autenticado. Saques requerem saldo suficiente. Apenas valores positivos são aceitos.",
 )
@@ -32,12 +34,14 @@ async def create_transaction(
     account = result.first()
     if not account:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Conta não encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conta não encontrada",
         )
 
     if data.type == TransactionType.withdraw and data.value > account.balance:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Saldo insuficiente"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Saldo insuficiente",
         )
 
     if data.type == TransactionType.deposit:

@@ -24,7 +24,7 @@ async def read_statement(
     current_user: User = Depends(get_current_user),
     start_date: Optional[datetime] = Query(None),
     end_date: Optional[datetime] = Query(None),
-    type: Optional[TransactionType] = Query(None),
+    transaction_type: Optional[TransactionType] = Query(None, alias="type"),
 ):
     result = await session.exec(
         select(Account).where(Account.user_id == current_user.id)
@@ -32,7 +32,8 @@ async def read_statement(
     account = result.first()
     if not account:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Account not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conta não encontrada",
         )
 
     stmt = select(Transaction).where(Transaction.account_id == account.id)
@@ -41,8 +42,8 @@ async def read_statement(
         stmt = stmt.where(Transaction.timestamp >= start_date)
     if end_date:
         stmt = stmt.where(Transaction.timestamp <= end_date)
-    if type:
-        stmt = stmt.where(Transaction.type == type)
+    if transaction_type:
+        stmt = stmt.where(Transaction.type == transaction_type)
 
     result = await session.exec(stmt)
     transactions = result.all()

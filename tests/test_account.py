@@ -21,10 +21,10 @@ def test_create_account_success(client):
     headers = register_and_login(client)
 
     resp = client.post("/account/", headers=headers)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == status.HTTP_201_CREATED
     data = resp.json()
     assert data["user_id"] == 1
-    assert data["balance"] == 0
+    assert data["balance"] == 0.0
 
 
 def test_create_account_duplicate(client):

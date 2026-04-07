@@ -1,117 +1,598 @@
 # 💸 API Bancária Assíncrona com FastAPI
 
-Projeto de uma API RESTful para gerenciamento de contas bancárias, transações (depósitos e saques) e exibição de extratos. Utiliza autenticação JWT e arquitetura assíncrona com FastAPI e SQLModel.
+[![Python](https://img.shields.io/badge/Python-3.13+-3776ab?logo=python&logoColor=white)](https://www.python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+Projeto de uma **API RESTful assíncrona** para gerenciamento de contas bancárias, transações e extratos. Desenvolvida com arquitetura limpa, autenticação JWT, testes automatizados e pronta para deploy.
+
+**[Demo](#-exemplos-de-execução)** • **[Documentação](#-documentação-dos-endpoints)** • **[Deployment](#-deployment)** • **[Contribuir](#-contribuindo)**
+
+---
+
+## 📋 Índice
+
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias](#-tecnologias)
+- [Requisitos](#-requisitos)
+- [Instalação](#-instalação)
+- [Configuração](#-configuração)
+- [Como usar](#-como-usar)
+- [Endpoints](#-documentação-dos-endpoints)
+- [Testes](#-testes)
+- [Docker](#-docker)
+- [Deployment](#-deployment)
+- [CI/CD](#-cicd-github-actions)
+- [Troubleshooting](#-troubleshooting)
+- [Contribuindo](#-contribuindo)
+- [Licença](#-licença)
 
 ---
 
 ## 🚀 Funcionalidades
 
-- ✅ Cadastro e autenticação de usuários com JWT
-- ✅ Criação de contas bancárias únicas por usuário
-- ✅ Registro de transações (depósito e saque)
-- ✅ Validação de saldo e valores positivos
-- ✅ Consulta de extrato com filtros (tipo e data)
-- ✅ Endpoints protegidos por autenticação
-- ✅ Banco de dados SQLite assíncrono (aiosqlite)
-- ✅ Testes automatizados com `pytest` e `httpx`
-- ✅ Documentação automática via Swagger e OpenAPI
+- ✅ **Autenticação JWT** - Registro, login e geração de tokens
+- ✅ **Gerenciamento de contas** - Uma conta por usuário
+- ✅ **Transações** - Depósitos e saques com validação de saldo
+- ✅ **Extrato** - Consulta com filtros por tipo e intervalo de datas
+- ✅ **Validações** - Valores positivos, saldo suficiente, emails únicos
+- ✅ **Assincronismo** - SQLite async + aiosqlite
+- ✅ **Testes automatizados** - 7 testes cobrindo fluxos principais
+- ✅ **Clean Architecture** - Separação clara de responsabilidades
+- ✅ **Documentação automática** - Swagger UI e OpenAPI
+- ✅ **Docker ready** - Pronto para containerização
+- ✅ **Migrations** - Alembic para versionamento do schema
 
 ---
 
 ## 📦 Tecnologias
 
-- Python 3.13
-- FastAPI
-- SQLModel
-- SQLite + aiosqlite (async)
-- JWT (via `python-jose`)
-- Alembic (migrações)
-- Pytest (testes)
-- Pydantic v2
+| Categoria | Tecnologia |
+|-----------|-----------|
+| **Linguagem** | Python 3.13+ |
+| **Framework Web** | FastAPI 0.104+ |
+| **ORM/Modelos** | SQLModel + SQLAlchemy |
+| **Banco de Dados** | SQLite + aiosqlite |
+| **Autenticação** | JWT (python-jose) + bcrypt |
+| **Validação** | Pydantic v2 |
+| **Configuração** | pydantic-settings |
+| **Testes** | pytest + pytest-asyncio |
+| **Migrações** | Alembic |
+| **Containerização** | Docker + Docker Compose |
 
 ---
 
-## 🏗️ Estrutura do Projeto
+## ⚡ Requisitos
 
-```bash
-api-bancaria-fastapi/
-├── app/
-│ ├── core/ # Segurança, JWT, configurações
-│ ├── domain/ # Modelos e esquemas
-│ ├── infra/ # Banco de dados, sessão
-│ ├── routers/ # Endpoints (auth, account, transaction, statement)
-│ └── main.py # Inicialização da API
-├── tests/ # Testes automatizados
-├── alembic/ # Controle de migrações
-├── pyproject.toml
-└── README.md
-```
+- Python 3.13+
+- Poetry (recomendado) ou pip
+- Docker & Docker Compose (para containerização)
+- Git
 
 ---
 
-## ⚙️ Como executar localmente
+## 📦 Instalação
 
-### 1. Clonar o repositório
+### Opção 1: Com Poetry (Recomendado)
 
 ```bash
+# Clone o repositório
 git clone https://github.com/FilipeMadeira13/api-bancaria-fastapi.git
 cd api-bancaria-fastapi
+
+# Instale as dependências
+poetry install
+
+# Ative o ambiente virtual
+poetry shell
 ```
 
-### 2. Criar ambiente virtual e instalar dependências
+### Opção 2: Com pip e venv
 
 ```bash
-poetry install --no-root
+# Clone o repositório
+git clone https://github.com/FilipeMadeira13/api-bancaria-fastapi.git
+cd api-bancaria-fastapi
+
+# Crie e ative o ambiente virtual
+python -m venv venv
+source venv/bin/activate  # No Windows: venv\Scripts\activate
+
+# Instale as dependências
+pip install -r requirements.txt
 ```
 
-### 3. Rodar o servidor
+---
+
+## ⚙️ Configuração
+
+### Variáveis de Ambiente
+
+Copie o arquivo de exemplo e configure conforme necessário:
 
 ```bash
+cp .env.example .env
+```
+
+**Variáveis disponíveis:**
+
+```env
+# Segurança
+SECRET_KEY=sua-chave-secreta-muito-segura
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Banco de Dados
+DATABASE_URL=sqlite+aiosqlite:///./bank.db
+SQL_ECHO=false  # Ativa logs SQL (útil para debug)
+```
+
+⚠️ **Em produção:**
+- Gere uma SECRET_KEY forte: `python -c "import secrets; print(secrets.token_urlsafe(32))"`
+- Use um banco PostgreSQL ou MySQL
+- Defina `SQL_ECHO=false`
+
+---
+
+## 🏃 Como usar
+
+### 1. Rodar o servidor de desenvolvimento
+
+```bash
+# Com auto-reload
+uvicorn app.main:app --reload
+
+# Ou com Poetry
+poetry run uvicorn app.main:app --reload
+```
+
+Servidor rodando em: **http://localhost:8000**
+
+### 2. Acessar a documentação
+
+- 📘 **Swagger UI**: http://localhost:8000/docs
+- 📙 **ReDoc**: http://localhost:8000/redoc
+- 📄 **OpenAPI JSON**: http://localhost:8000/openapi.json
+
+---
+
+## 📝 Documentação dos Endpoints
+
+### Autenticação
+
+#### Registrar novo usuário
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "password": "senha-segura-aqui"
+}
+
+Response:
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+#### Fazer login
+```http
+POST /auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=joao@example.com&password=senha-segura-aqui
+
+Response:
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+### Contas
+
+#### Criar conta bancária
+```http
+POST /account/
+Authorization: Bearer {seu_token}
+
+Response (201):
+{
+  "id": 1,
+  "user_id": 1,
+  "balance": 0.0
+}
+```
+
+### Transações
+
+#### Registrar transação (Depósito/Saque)
+```http
+POST /transaction/
+Authorization: Bearer {seu_token}
+Content-Type: application/json
+
+{
+  "type": "deposit",
+  "value": 100.00
+}
+
+Response (201):
+{
+  "message": "Deposit realizado com sucesso",
+  "new_balance": 100.00,
+  "transaction_id": 1
+}
+```
+
+Tipos: `"deposit"` ou `"withdraw"`
+
+### Extrato
+
+#### Consultar transações
+```http
+GET /statement/
+Authorization: Bearer {seu_token}
+
+Response (200):
+[
+  {
+    "id": 1,
+    "account_id": 1,
+    "type": "deposit",
+    "value": 100.00,
+    "timestamp": "2026-04-06T10:30:00"
+  }
+]
+```
+
+**Filtros opcionais:**
+- `?type=deposit` - Filtra por tipo
+- `?start_date=2026-04-01T00:00:00&end_date=2026-04-06T23:59:59` - Filtra por intervalo
+
+---
+
+## 📊 Exemplos de Execução
+
+### Com cURL
+
+```bash
+# 1. Registrar usuário
+curl -X POST "http://localhost:8000/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"João","email":"joao@test.com","password":"123456"}'
+
+# 2. Extrair token (será retornado no passo anterior)
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# 3. Criar conta
+curl -X POST "http://localhost:8000/account/" \
+  -H "Authorization: Bearer $TOKEN"
+
+# 4. depositar dinheiro
+curl -X POST "http://localhost:8000/transaction/" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"deposit","value":500.00}'
+
+# 5. Consultar extrato
+curl -X GET "http://localhost:8000/statement/" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+---
+
+## 🧪 Testes
+
+### Rodar testes com cobertura
+
+```bash
+# Todos os testes
+poetry run pytest -v
+
+# Com relatório de cobertura
+poetry run pytest --cov=app --cov-report=html
+
+# Teste específico
+poetry run pytest tests/test_auth.py -v
+```
+
+**Status atual:**
+- ✅ 7 testes passando
+- 📊 Cobertura: auth, account, transaction, statement
+
+---
+
+## 🐳 Docker
+
+### Construir imagem
+
+```bash
+docker build -t api-bancaria:latest .
+```
+
+### Rodar container
+
+```bash
+docker run -p 8000:8000 \
+  -e SECRET_KEY=sua-chave \
+  -e DATABASE_URL=sqlite+aiosqlite:///./bank.db \
+  api-bancaria:latest
+```
+
+### Com Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+**Arquivo `docker-compose.yml` (criar se não existir):**
+
+```yaml
+version: '3.9'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-super-secret}
+      DATABASE_URL: sqlite+aiosqlite:///./bank.db
+      SQL_ECHO: "false"
+    volumes:
+      - ./bank.db:/app/bank.db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 🚀 Deployment
+
+### Railway
+
+```bash
+# 1. Instale Railway CLI
+npm install -g @railway/cli
+
+# 2. Login
+railway login
+
+# 3. Init project
+railway init
+
+# 4. Deploy
+railway up
+```
+
+### Heroku
+
+```bash
+# 1. Create app
+heroku create nome-da-sua-api
+
+# 2. Set environment variables
+heroku config:set SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
+
+# 3. Deploy
+git push heroku main
+```
+
+### Render
+
+1. Conecte seu repositório GitHub ao [Render.com](https://render.com)
+2. Configure as variáveis de ambiente no dashboard
+3. Deploy automático ao fazer push
+
+### Variáveis de Ambiente para Produção
+
+```env
+SECRET_KEY=your-strong-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+DATABASE_URL=postgresql://user:password@host:5432/dbname
+SQL_ECHO=false
+```
+
+---
+
+## 🔄 CI/CD (GitHub Actions)
+
+Crie `.github/workflows/tests.yml` para testes automáticos:
+
+```yaml
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install
+    
+    - name: Run tests
+      run: poetry run pytest -v --cov=app
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+```
+
+---
+
+## 📋 Estrutura do Projeto
+
+```
+api-bancaria-fastapi/
+├── app/
+│   ├── __init__.py
+│   ├── main.py                 # Inicialização FastAPI
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py          # Configurações (env variables)
+│   │   └── security.py        # Autenticação JWT, hash
+│   ├── domain/
+│   │   ├── __init__.py
+│   │   ├── models.py          # SQLModel (User, Account, Transaction)
+│   │   └── schemas.py         # Pydantic schemas (request/response)
+│   ├── infra/
+│   │   ├── __init__.py
+│   │   └── database.py        # Conexão e sessão async
+│   └── routers/
+│       ├── __init__.py
+│       ├── auth.py            # /auth/* endpoints
+│       ├── account.py         # /account/* endpoints
+│       ├── transaction.py     # /transaction/* endpoints
+│       └── statement.py       # /statement/* endpoints
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py            # Configuração pytest
+│   ├── test_auth.py
+│   ├── test_account.py
+│   ├── test_transaction.py
+│   └── test_statement.py
+├── alembic/                    # Migrações de banco
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── docker-compose.yml
+├── pyproject.toml
+├── README.md
+└── LICENSE
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Erro: "No module named 'app'"
+
+```bash
+# Certifique-se de rodar do diretório raiz
+cd api-bancaria-fastapi
+
+# E use o uvicorn corretamente
 uvicorn app.main:app --reload
 ```
 
-Acesse em: http://localhost:8000/docs
+### Erro: "Password cannot be longer than 72 bytes"
 
-## 🧪 Rodar os testes
+- Use bcrypt nativo (já implementado)
+- Não use senhas com mais de 72 caracteres
+
+### Banco de dados não criado
 
 ```bash
-pytest -v
+# O banco é criado automaticamente ao rodar a app
+# Se quiser forçar:
+python -c "from app.infra.database import create_db_and_tables; import asyncio; asyncio.run(create_db_and_tables())"
 ```
 
-## 🔐 Autenticação
+### Testes falhando
 
-A autenticação é baseada em JWT.
-Após o registro/login, envie o token no header:
+```bash
+# Limpe o ambiente
+rm -rf .venv
+poetry install
 
-```makefile
-Authorization: Bearer <seu_token>
+# Rode os testes novamente
+poetry run pytest -v
 ```
 
-## 📄 Documentação interativa
+---
 
-- Swagger UI: http://localhost:8000/docs
+## 🤝 Contribuindo
 
-- OpenAPI JSON: http://localhost:8000/openapi.json
+Contribuições são bem-vindas! Por favor:
 
-## 🛠️ Futuras melhorias
+1. **Fork** o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um **Pull Request**
 
-- Integração com banco PostgreSQL
+### Padrões de Código
 
-- Suporte a múltiplas contas por usuário
+- Use [Black](https://github.com/psf/black) para formatação
+- Siga [PEP 8](https://www.python.org/dev/peps/pep-0008/)
+- Adicione testes para novas funcionalidades
+- Mantenha testes com cobertura > 80%
 
-- Dashboard com dados agregados
+### Configurar pre-commit (opcional)
 
-- Deploy com Docker e CI/CD
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+---
+
+## 📚 Melhorias Futuras
+
+- [ ] Integração com banco PostgreSQL
+- [ ] Suporte a múltiplas contas por usuário
+- [ ] Dashboard com dados agregados
+- [ ] Webhook para notificações
+- [ ] Rate limiting
+- [ ] Paginação avançada
+- [ ] Testes de carga (k6/locust)
+- [ ] Observabilidade (Prometheus, Grafana)
+- [ ] CORS configurável
+- [ ] Swagger authentication
+
+---
+
+## 📄 Licença
+
+Este projeto está licenciado sob a **MIT License** - veja [LICENSE](LICENSE) para detalhes.
+
+---
 
 ## 👨‍💻 Autor
 
-Carlos Filipe Madeira de Souza
+**Carlos Filipe Madeira de Souza**
+
 Desenvolvedor em formação com foco em APIs, dados e engenharia de software.
 
-- GitHub: [@FilipeMadeira13](https://github.com/FilipeMadeira13)
+- 🐙 GitHub: [@FilipeMadeira13](https://github.com/FilipeMadeira13)
+- 💼 LinkedIn: [Carlos Filipe](https://linkedin.com/in/carlos-filipe-madeira-de-souza-16211922a)
+- 📧 Email: cfilipemadeira@gmail.com
 
-- [LinkedIn](linkedin.com/in/carlos-filipe-madeira-de-souza-16211922a)
+---
 
-## 📝 Licença
+## 🙏 Agradecimentos
 
-Este projeto está licenciado sob a MIT License.
+- [FastAPI](https://fastapi.tiangolo.com) - Framework excepcional
+- [SQLModel](https://sqlmodel.tiangolo.com) - ORM moderno
+- [Pydantic](https://docs.pydantic.dev) - Validação de dados
+
+---
+
+**Made with ❤️ by [Carlos Filipe](https://github.com/FilipeMadeira13)**
+

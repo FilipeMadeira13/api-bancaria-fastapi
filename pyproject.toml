@@ -15,7 +15,9 @@ dependencies = [
     "python-dotenv (>=1.1.1,<2.0.0)",
     "aiosqlite (>=0.21.0,<0.22.0)",
     "bcrypt",
-    "httpx (>=0.28.1,<0.29.0)",
+    "python-multipart",
+    "pydantic-settings",
+    "pytest",
     "pytest-asyncio",
 ]
 

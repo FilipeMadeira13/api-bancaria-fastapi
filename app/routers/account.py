@@ -4,6 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.security import get_current_user
 from app.domain.models import Account, User
+from app.domain.schemas import AccountRead
 from app.infra.database import get_session
 
 router = APIRouter(prefix="/account", tags=["account"])
@@ -11,6 +12,8 @@ router = APIRouter(prefix="/account", tags=["account"])
 
 @router.post(
     "/",
+    response_model=AccountRead,
+    status_code=status.HTTP_201_CREATED,
     summary="Criar conta bancária",
     description="Cria uma conta corrente para o usuário autenticado. Um usuário pode ter apenas uma conta vinculada.",
 )

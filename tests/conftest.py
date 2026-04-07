@@ -39,16 +39,9 @@ async def session():
 
 
 @pytest.fixture(autouse=True)
-def clean_tables():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(clean_tables_async())
-    loop.close()
-
-
-async def clean_tables_async():
+async def clean_tables():
     async with test_engine.begin() as conn:
-        tables = ['"user"', '"account"', '"transaction"']
+        tables = ['"transaction"', '"account"', '"user"']
         for table in tables:
             await conn.execute(text(f"DELETE FROM {table}"))
         await conn.commit()
