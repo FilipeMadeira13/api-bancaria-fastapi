@@ -41,6 +41,7 @@ Análise estática de `app/`, `tests/`, migrações Alembic, dependências, Dock
 
 ### B01 — Alinhar dependências de execução e desenvolvimento
 
+- **Status:** concluída em 27/10/2026, por indicação do autor. Instalação e testes previstos abaixo não foram verificados nesta sessão.
 - **Objetivo/evidência:** tornar instalações reproduzíveis a partir de uma fonte definida (E8).
 - **Tamanho:** P. **Dependências:** nenhuma.
 - **Aceitação:** definir `pyproject.toml` como fonte; declarar ferramentas de teste e qualidade em grupo de desenvolvimento; sincronizar lock e exportação para pip. Uvicorn, Alembic, httpx e pytest-cov devem estar no conjunto apropriado. Não atualizar versões sem necessidade desta tarefa.
