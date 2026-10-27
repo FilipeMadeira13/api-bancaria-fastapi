@@ -74,6 +74,10 @@ Projeto de uma **API RESTful assíncrona** para gerenciamento de contas bancári
 
 ## 📦 Instalação
 
+As dependências são declaradas em `pyproject.toml`, a fonte de referência do projeto. O arquivo `poetry.lock` registra as versões resolvidas para tornar as instalações reproduzíveis.
+
+As ferramentas de testes e qualidade (`pytest`, `pytest-asyncio`, `httpx`, `pytest-cov`, Black e flake8) ficam no grupo de desenvolvimento `dev`.
+
 ### Opção 1: Com Poetry (Recomendado)
 
 ```bash
@@ -81,14 +85,16 @@ Projeto de uma **API RESTful assíncrona** para gerenciamento de contas bancári
 git clone https://github.com/FilipeMadeira13/api-bancaria-fastapi.git
 cd api-bancaria-fastapi
 
-# Instale as dependências
-poetry install
+# Instale as dependências de execução e desenvolvimento
+poetry install --with dev
 
 # Ative o ambiente virtual
 poetry shell
 ```
 
 ### Opção 2: Com pip e venv
+
+O `requirements.txt` é uma exportação das dependências resolvidas pelo Poetry e inclui execução e desenvolvimento. Ele contém hashes para verificar a integridade dos pacotes baixados. Ao alterar dependências, atualize a declaração em `pyproject.toml` e sincronize o lock e a exportação; evite editar o `requirements.txt` manualmente.
 
 ```bash
 # Clone o repositório
@@ -99,8 +105,8 @@ cd api-bancaria-fastapi
 python -m venv venv
 source venv/bin/activate  # No Windows: venv\Scripts\activate
 
-# Instale as dependências
-pip install -r requirements.txt
+# Instale as dependências verificando os hashes
+pip install --require-hashes -r requirements.txt
 ```
 
 ---
@@ -315,6 +321,8 @@ curl -X GET "http://localhost:8000/statement/" \
 
 ## 🧪 Testes
 
+Instale as dependências de desenvolvimento antes de executar os testes. Os dois caminhos da seção de instalação incluem essas ferramentas; `pytest-cov` fornece as opções de cobertura usadas abaixo.
+
 ### Rodar testes com cobertura
 
 ```bash
@@ -328,9 +336,7 @@ poetry run pytest --cov=app --cov-report=html
 poetry run pytest tests/test_auth.py -v
 ```
 
-**Status atual:**
-- ✅ 7 testes passando
-- 📊 Cobertura: auth, account, transaction, statement
+Os testes estão organizados por autenticação, contas, transações e extrato. Confirme os resultados e a cobertura executando os comandos acima; esta atualização da documentação não incluiu execução de testes.
 
 ---
 
