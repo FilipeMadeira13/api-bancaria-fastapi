@@ -86,10 +86,10 @@ git clone https://github.com/FilipeMadeira13/api-bancaria-fastapi.git
 cd api-bancaria-fastapi
 
 # Instale as dependências de execução e desenvolvimento
-poetry install --with dev
+poetry install --with dev --no-root
 
-# Ative o ambiente virtual
-poetry shell
+# Ative o ambiente virtual com Poetry 2.x (Bash/Zsh)
+eval "$(poetry env activate)"
 ```
 
 ### Opção 2: Com pip e venv
@@ -151,8 +151,8 @@ source .venv/bin/activate  # Linux/Mac
 # ou
 .venv\Scripts\activate  # Windows
 
-# Com Poetry
-poetry shell
+# Com Poetry 2.x (Bash/Zsh)
+eval "$(poetry env activate)"
 ```
 
 ### 2. Rodar o servidor de desenvolvimento
